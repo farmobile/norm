@@ -143,16 +143,16 @@ if __name__ == '__main__':
     norm.define_entity('articles')
 
     # define an entity and key to flatten. Optionally pass the id field or 'id'
-    # will be used instead. Multiple nested entities are recursively search for.
+    # will be used instead. Multiple nested entities are recursively searched for.
     norm.define_nested_entity('users', 'author')
     norm.define_nested_entity('addresses', 'address')
 
     # entities nested multiple times require the depth to be defined so there is no
-    # data loss. If not set the code will dynamically determine the depth, but only
+    # data loss. If not set, the code will dynamically determine the depth, but only
     # by using the first entry in the data set. If it's missing an entity it won't
     # parse correctly. If your data set is all structed the same (no rows are missing
-    # an entity), you can skip this step. Entities should be listed in order of the
-    # most deeply nested to the least.
+    # an entity), you can skip this step. Otherwise, entities should be listed in order
+    # of the most deeply nested to the least.
     norm.set_entity_order(('addresses', 'users'))
 
     # normalize and return the data
