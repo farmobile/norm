@@ -150,7 +150,7 @@ if __name__ == '__main__':
     # entities nested multiple times require the depth to be defined so there is no
     # data loss. If not set, the code will dynamically determine the depth, but only
     # by using the first entry in the data set. If it's missing an entity it won't
-    # parse correctly. If your data set is all structed the same (no rows are missing
+    # parse correctly. If your data set is all structured the same (no rows are missing
     # an entity), you can skip this step. Otherwise, entities should be listed in order
     # of the most deeply nested to the least.
     norm.set_entity_order(('addresses', 'users'))
