@@ -6,6 +6,7 @@
 # Nested data that is not defined to be flattened will be left in place
 
 # TODO:
+# - change define_entity name
 # - split out private methods into a base class
 # - move example to its own file
 # - fix long lines if any
