@@ -1,7 +1,9 @@
 #!/usr/bin/python
 
 # This code takes nested data structures and flattens them into groups, keyed
-# on id fields, and linked to each other by id fields. 
+# on id fields, and linked to each other by id fields. You must first set some
+# values to define the output keys and any entities that you want to flatten.
+# Nested data that is not defined to be flattened will be left in place
 
 class Normalize:
 
@@ -13,6 +15,7 @@ class Normalize:
 
     def _set_nested_id(self, data, key, idval):
         '''recursively replace nested data with an id'''
+
         for index in data:
             if index == key:
                 data[index] = idval;
@@ -23,6 +26,7 @@ class Normalize:
 
     def _search_dict(self, data, key):
         '''recursive search a dict for a key'''
+
         for index in data:
             if index == key:
                 return data[index]
@@ -143,7 +147,8 @@ norm.define_nested_entity('addresses', 'address')
 
 # entities nested multiple times require the depth to be defined so there is no
 # data loss. If not set the code will dynamically determine the depth, but only
-# for the first entry in the data set
+# by using the first entry in the data set. If it's missing an entity it won't
+# parse correctly
 norm.set_entity_order(('addresses', 'users'))
 
 # normalize the data
