@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # This code takes nested data structures and flattens them into groups, keyed
-# on id fields, and linked to each other by id fields. You must first set some
+# on id fields, and linked to each other by id values. You must first set some
 # values to define the output keys and any entities that you want to flatten.
 # Nested data that is not defined to be flattened will be left in place
 
