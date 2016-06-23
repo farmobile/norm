@@ -5,6 +5,13 @@
 # values to define the output keys and any entities that you want to flatten.
 # Nested data that is not defined to be flattened will be left in place
 
+# TODO:
+# - split out private methods into a base class
+# - move example to its own file
+# - fix long lines if any
+# - support field rename and remove
+# - benchmark performance
+
 class Normalize:
 
     def __init__(self):
@@ -86,6 +93,12 @@ class Normalize:
             raise ValueError('You must set an entity before setting a nested one')
         self.entities[self.entities.keys()[0]]['entities'][name] = {'id': id_fld, 'key': keyval}
 
+    def remove_flds(entity, flds):
+        pass
+
+    def rename_flds(entity, name, new_name):
+        pass
+
     def parse(self, data):
         '''convert data'''
 
@@ -142,8 +155,9 @@ if __name__ == '__main__':
     # set the top level name
     norm.define_entity('articles')
 
-    # define an entity and key to flatten. Optionally pass the id field or 'id'
-    # will be used instead. Multiple nested entities are recursively searched for.
+    # define an entity and key to flatten. Optionally pass the id field as the thrid
+    # positional argument, or 'id' will be used instead. Multiple nested entities are
+    # recursively searched for.
     norm.define_nested_entity('users', 'author')
     norm.define_nested_entity('addresses', 'address')
 
