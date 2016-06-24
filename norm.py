@@ -6,7 +6,6 @@
 # Nested data that is not defined to be flattened will be left in place
 
 # TODO:
-# - fix long lines if any
 # - support field rename and remove
 # - license
 # - benchmark performance
@@ -62,7 +61,7 @@ class Normalize_Base:
         return (name, id_key, new_data)
 
     def _get_entity_order(self, name, row):
-        '''dynamically determine entity depth order from the first row of data'''
+        '''determine entity depth order from the first row of data'''
 
         data = []
         for entity in self.entities[name]['entities']:
@@ -92,8 +91,9 @@ class Normalize(Normalize_Base):
         '''set a nested entity to be flattend'''
 
         if not len(self.entities):
-            raise ValueError('You must set an entity before setting a nested one')
-        self.entities[self.entities.keys()[0]]['entities'][name] = {'id': id_fld, 'key': keyval}
+            raise ValueError('You must set the primary first')
+        self.entities[self.entities.keys()[0]]['entities'][name] = {
+            'id': id_fld, 'key': keyval}
 
     def remove_flds(entity, flds):
         pass
