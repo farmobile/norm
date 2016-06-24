@@ -13,7 +13,7 @@ if __name__ == '__main__':
             }
         },
         {'id': 3, 'title': 'Some Other Article', 'author': {
-            'id': 1, 'name': 'Ben' 
+            'id': 3, 'name': 'Ben' 
             }
         },
         {'id': 2, 'title': 'Other Article', 'author': {
@@ -62,16 +62,17 @@ if __name__ == '__main__':
     #        'articles': {
     #            1: {'author': 1, 'id': 1, 'title': 'Some Article'},
     #            2: {'author': 2, 'id': 2, 'title': 'Other Article'},
-    #            3: {'author': 1, 'id': 3, 'title': 'Some Other Article'},
-    #            4: {'id': 4, 'title': 'Some Other Article'}},
-    #        'users': {
-    #            1: {'id': 1, 'name': 'Ben'},
-    #            2: {'address': 1, 'id': 2, 'name': 'Skippy'}
+    #            3: {'author': 3, 'id': 3, 'title': 'Some Other Article'},
+    #            4: {'id': 4, 'title': 'Some Other Article'}
     #        },
-    #        'addresses': {
+    #        'users': {
+    #            1: {'address': 2, 'id': 1, 'name': 'Dan'},
+    #            2: {'address': 1, 'id': 2, 'name': 'Skippy'},
+    #            3: {'id': 3, 'name': 'Ben'}
+    #        },
+    #        'addresses':{
     #            1: {'city': 'somewhereville', 'state': 'Kansas', 'street': '100 somewhere lane', 'id': 1},
     #            2: {'city': 'somewhereville', 'state': 'Kansas', 'street': '101 somewhere lane', 'id': 2}
     #        }
-    #    },
-    #    'results': [1, 3, 2, 4]
+    #    }, 'results': [1, 3, 2, 4]
     #}
