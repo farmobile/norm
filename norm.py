@@ -9,6 +9,7 @@
 # - support field rename and remove
 # - license
 # - benchmark performance
+# - add unit tests
 
 class Normalize_Base:
 
