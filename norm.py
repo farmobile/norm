@@ -143,12 +143,10 @@ class Normalize(Normalize_Base):
                 entity_id = self.entities[name]['entities'][entity]['id']
                 entity_key = self.entities[name]['entities'][entity]['key']
                 match = self._search_dict(entry, entity_key)
-                if not match or entity_id not in match:
-                    continue
-
-                match = self._process_data_changes(entity, match)
-                new_data['entities'][entity][match[entity_id]] = match
-                self._set_nested_id(entry, entity_key, match[entity_id])
+                if match and entity_id in match:
+                    match = self._process_data_changes(entity, match)
+                    new_data['entities'][entity][match[entity_id]] = match
+                    self._set_nested_id(entry, entity_key, match[entity_id])
 
             entry = self._process_data_changes(name, entry)
             new_data['entities'][name][entry[id_key]] = entry
