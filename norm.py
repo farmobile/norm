@@ -5,12 +5,6 @@
 # values to define the output keys and any entities that you want to flatten.
 # Nested data that is not defined to be flattened will be left in place
 
-# TODO:
-# - support field rename and remove
-# - license
-# - benchmark performance
-# - add unit tests
-
 class Normalize_Base:
 
     def __init__(self):
