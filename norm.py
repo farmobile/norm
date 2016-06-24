@@ -112,13 +112,13 @@ class Normalize(Normalize_Base):
         self.entities[self.entities.keys()[0]]['entities'][name] = {
             'id': id_fld, 'key': keyval}
 
-    def remove_flds(self, entity, flds):
-        '''remove an array of fields from a defined entity'''
+    def remove_flds(self, entity, fld):
+        '''remove a field from a defined entity'''
 
         if entity in self.remove_fldvals:
-            self.remove_fldvals[entity].append(flds)
+            self.remove_fldvals[entity].append(fld)
         else:
-            self.remove_fldvals[entity] = [flds]
+            self.remove_fldvals[entity] = [fld]
 
     def rename_flds(self, entity, name, new_name):
         '''rename a field for an entity'''
