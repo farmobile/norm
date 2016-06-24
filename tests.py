@@ -4,6 +4,7 @@ import unittest
 from norm import Normalize, Normalize_Base
 
 class TestNormalizeBase(unittest.TestCase):
+
     def test_base_data(self):
         norm = Normalize()
         norm.define_primary('foo')
@@ -11,28 +12,59 @@ class TestNormalizeBase(unittest.TestCase):
             {}}, 'results': []}))
 
     def test_set_nested_id(self):
-        pass
+        data = {'id': 1, 'title': 'One', 'baz': {'id': 1, 'bar': {'id': 1}}}
+        norm = Normalize()
+        norm._set_nested_id(data, 'bar', 3)
+        self.assertEqual(data , {'baz': {'bar': 3, 'id': 1}, 'id': 1, 'title':
+            'One'})
 
     def test_search_dict(self):
-        pass
+        data = {'id': 1, 'title': 'One', 'baz': {'id': 1}}
+        norm = Normalize()
+        self.assertEqual(norm._search_dict(data, 'baz'), {'id': 1})
 
     def test_get_entity_depth(self):
-        pass
+        data = {'id': 1, 'title': 'One', 'baz': {'id': 1}}
+        norm = Normalize()
+        self.assertEqual(norm._get_entity_depth('baz', data), 1)
 
     def test_get_entity_order(self):
-        pass
+        data = {'id': 1, 'title': 'One', 'baz': {'id': 1}}
+        norm = Normalize()
+        norm.define_primary('foo')
+        norm.define_nested_entity('bar', 'baz')
+        norm._get_entity_order('foo', data)
+        self.assertEqual(norm.entity_order, ['bar'])
 
     def test_process_data_changes(self):
-        pass
+        data = {'id': 1, 'title': 'One', 'baz': {'id': 1}}
+        norm = Normalize()
+        norm.define_primary('foo')
+        norm.define_nested_entity('bar', 'baz')
+        self.assertEqual(norm._process_data_changes('baz', data), data)
+        norm.rename_flds('foo', 'title', 'heading')
+        self.assertEqual(norm._process_data_changes('foo', data), {'baz':
+            {'id': 1}, 'id': 1, 'heading': 'One'})
 
     def test_process_rename(self):
-        pass
+        data = {'id': 1, 'title': 'One', 'baz': {'id': 1}}
+        norm = Normalize()
+        norm.define_primary('foo')
+        norm.rename_flds('foo', 'title', 'heading')
+        self.assertEqual(norm._process_data_changes('foo', data), {'baz':
+            {'id': 1}, 'id': 1, 'heading': 'One'})
 
     def test_process_remove(self):
-        pass
+        data = {'id': 1, 'title': 'One', 'baz': {'id': 1}}
+        norm = Normalize()
+        norm.define_primary('foo')
+        norm.remove_flds('foo', 'title')
+        self.assertEqual(norm._process_data_changes('foo', data), {'baz':
+            {'id': 1}, 'id': 1})
 
 
 class TestNormalize(unittest.TestCase):
+
     def test_define_primary(self):
         norm = Normalize()
         norm.define_primary('foo')
