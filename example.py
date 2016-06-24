@@ -39,10 +39,10 @@ if __name__ == '__main__':
 
 
     # rename fields for a given entity name
-    norm.rename_flds('articles', 'name', 'display_name')
+    # norm.rename_flds('addresses', 'street', 'road')
 
     # remove fields for a given entity name
-    norm.remove_flds('addresses', 'city')
+    # norm.remove_flds('addresses', 'city')
 
     # entities nested multiple times require the depth to be defined so there is no
     # data loss. If not set, the code will dynamically determine the depth, but only
