@@ -7,13 +7,13 @@
 
 # TODO:
 # - change define_entity name
-# - split out private methods into a base class
 # - move example to its own file
 # - fix long lines if any
 # - support field rename and remove
+# - license
 # - benchmark performance
 
-class Normalize:
+class Normalize_Base:
 
     def __init__(self):
         '''init data'''
@@ -74,6 +74,9 @@ class Normalize:
         data.sort(key=lambda x:x[0])
         self.entity_order = [v[1] for v in data]
         self.entity_order.reverse()
+
+
+class Normalize(Normalize_Base):
 
     def define_entity(self, name, id_fld='id'):
         '''used to define the top level entity name used in the results'''
