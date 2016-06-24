@@ -81,9 +81,18 @@ class Normalize_Base:
         return data
 
     def _process_rename(self, entity, data):
+        if entity in self.rename_fldvals:
+            for fld in self.rename_fldvals[entity]:
+                if fld[0] in data:
+                    data[fld[1]] = data[fld[0]]
+                    del data[fld[0]]
         return data
 
     def _process_remove(self, entity, data):
+        if entity in self.remove_fldvals:
+            for fld in self.remove_fldvals[entity]:
+                if fld in data:
+                    del data[fld]
         return data
 
 
@@ -144,11 +153,11 @@ class Normalize(Normalize_Base):
                 if not match or entity_id not in match:
                     continue
 
-                #match = self._process_data_changes(entity, match)
+                match = self._process_data_changes(entity, match)
                 new_data['entities'][entity][match[entity_id]] = match
                 self._set_nested_id(entry, entity_key, match[entity_id])
 
-            #entry = self._process_data_changes(name, entry)
+            entry = self._process_data_changes(name, entry)
             new_data['entities'][name][entry[id_key]] = entry
             new_data['results'].append(entry[id_key])
         return new_data
