@@ -23,8 +23,7 @@ class Normalize_Base:
                 data[index] = idval;
                 return
             if isinstance(data[index], dict):
-                return self._set_nested_id(data[index], key, idval)
-        return
+                self._set_nested_id(data[index], key, idval)
 
     def _search_dict(self, data, key):
         '''recursive search a dict for a key'''
