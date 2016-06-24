@@ -6,7 +6,6 @@
 # Nested data that is not defined to be flattened will be left in place
 
 # TODO:
-# - change define_entity name
 # - move example to its own file
 # - fix long lines if any
 # - support field rename and remove
@@ -78,7 +77,7 @@ class Normalize_Base:
 
 class Normalize(Normalize_Base):
 
-    def define_entity(self, name, id_fld='id'):
+    def define_primary(self, name, id_fld='id'):
         '''used to define the top level entity name used in the results'''
         
         if len(self.entities):
@@ -157,7 +156,7 @@ if __name__ == '__main__':
     norm = Normalize()
 
     # set the top level name
-    norm.define_entity('articles')
+    norm.define_primary('articles')
 
     # define an entity and key to flatten. Optionally pass the id field as the thrid
     # positional argument, or 'id' will be used instead. Multiple nested entities are
