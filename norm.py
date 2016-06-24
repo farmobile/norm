@@ -17,6 +17,8 @@ class Normalize_Base:
 
         self.entities = {}
         self.entity_order = []
+        self.remove_fldvals = {}
+        self.rename_fldvals = {}
 
     def _set_nested_id(self, data, key, idval):
         '''recursively replace nested data with an id'''
@@ -72,6 +74,17 @@ class Normalize_Base:
         self.entity_order = [v[1] for v in data]
         self.entity_order.reverse()
 
+    def _process_data_changes(self, entity, data):
+        data = self._process_remove(entity, data)
+        data = self._process_rename(entity, data)
+        return data
+
+    def _process_rename(self, entity, data):
+        return data
+
+    def _process_remove(self, entity, data):
+        return data
+
 
 class Normalize(Normalize_Base):
 
@@ -95,11 +108,21 @@ class Normalize(Normalize_Base):
         self.entities[self.entities.keys()[0]]['entities'][name] = {
             'id': id_fld, 'key': keyval}
 
-    def remove_flds(entity, flds):
-        pass
+    def remove_flds(self, entity, flds):
+        '''remove an array of fields from a defined entity'''
 
-    def rename_flds(entity, name, new_name):
-        pass
+        if entity in self.remove_fldvals:
+            self.remove_fldvals[entity].append(flds)
+        else:
+            self.remove_fldvals[entity] = [flds]
+
+    def rename_flds(self, entity, name, new_name):
+        '''rename a field for an entity'''
+
+        if entity in self.rename_fldvals:
+            self.rename_fldvals[entity].append((name, new_name))
+        else:
+            self.rename_fldvals[entity] = [(name, new_name)]
 
     def parse(self, data):
         '''convert data'''
@@ -120,9 +143,11 @@ class Normalize(Normalize_Base):
                 if not match or entity_id not in match:
                     continue
 
+                #match = self._process_data_changes(entity, match)
                 new_data['entities'][entity][match[entity_id]] = match
                 self._set_nested_id(entry, entity_key, match[entity_id])
 
+            #entry = self._process_data_changes(name, entry)
             new_data['entities'][name][entry[id_key]] = entry
             new_data['results'].append(entry[id_key])
         return new_data
