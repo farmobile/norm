@@ -54,6 +54,11 @@ class Normalize_Base:
             if isinstance(data[index], dict):
                 depth += 1
                 return self._get_entity_depth(entity, data[index], depth)
+            elif isinstance(data[index], list):
+                for row in data[index]:
+                    res = self._get_entity_depth(entity, row, (depth + 1))
+                    if res and res > depth:
+                        return res
         return None
 
     def _base_data(self):
