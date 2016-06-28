@@ -1,25 +1,28 @@
 #!/usr/bin/python
 
+import pprint
 from norm import Normalize
 
 if __name__ == '__main__':
 
     # Example data
     data = [
-        {'id': 1, 'title': 'Some Article', 'author': {
-            'id': 1, 'name': 'Dan', 'address': {
-                'id': 2, 'street': '101 somewhere lane', 'city': 'somewhereville', 'state': 'Kansas'
+        {'id': 2, 'title': 'Other Article', 'author': [
+            {'id': 10, 'name': 'Jason'},
+            {'id': 2, 'name': 'Skippy', 'address': {
+                'id': 1, 'street': '100 somewhere lane', 'city': 'somewhereville', 'state': 'Kansas'
                 }
+            }]
+        },
+        {'id': 1, 'title': 'Some Article', 'author': {
+            'id': 1, 'name': 'Dan', 'address': [
+                {'id': 2, 'street': '101 somewhere lane', 'city': 'somewhereville', 'state': 'Kansas'},
+                {'id': 6, 'street': '106 somewhere lane', 'city': 'somewhereville', 'state': 'Kansas'}
+                ]
             }
         },
         {'id': 3, 'title': 'Some Other Article', 'author': {
             'id': 3, 'name': 'Ben' 
-            }
-        },
-        {'id': 2, 'title': 'Other Article', 'author': {
-            'id': 2, 'name': 'Skippy', 'address': {
-                'id': 1, 'street': '100 somewhere lane', 'city': 'somewhereville', 'state': 'Kansas'
-                }
             }
         },
         {'id': 4, 'title': 'Some Other Article'}
@@ -50,29 +53,38 @@ if __name__ == '__main__':
     # parse correctly. If your data set is all structured the same (no rows are missing
     # an entity), you can skip this step. Otherwise, entities should be listed in order
     # of the most deeply nested to the least.
-    norm.set_entity_order(('addresses', 'users'))
+    #norm.set_entity_order(('addresses', 'users'))
 
     # normalize and return the data
-    print norm.parse(data)
+    pprint.pprint(norm.parse(data))
 
-    # Results from the example:
+    # result:
 
-    #{
-    #    'entities': {
-    #        'articles': {
-    #            1: {'author': 1, 'id': 1, 'title': 'Some Article'},
-    #            2: {'author': 2, 'id': 2, 'title': 'Other Article'},
-    #            3: {'author': 3, 'id': 3, 'title': 'Some Other Article'},
-    #            4: {'id': 4, 'title': 'Some Other Article'}
-    #        },
-    #        'users': {
-    #            1: {'address': 2, 'id': 1, 'name': 'Dan'},
-    #            2: {'address': 1, 'id': 2, 'name': 'Skippy'},
-    #            3: {'id': 3, 'name': 'Ben'}
-    #        },
-    #        'addresses':{
-    #            1: {'city': 'somewhereville', 'state': 'Kansas', 'street': '100 somewhere lane', 'id': 1},
-    #            2: {'city': 'somewhereville', 'state': 'Kansas', 'street': '101 somewhere lane', 'id': 2}
-    #        }
-    #    }, 'results': [1, 3, 2, 4]
-    #}
+    #{'entities': {'addresses': {1: {'city': 'somewhereville',
+    #               'id': 1,
+    #               'state': 'Kansas',
+    #               'street': '100 somewhere lane'},
+    #           2: {'city': 'somewhereville',
+    #               'id': 2,
+    #               'state': 'Kansas',
+    #               'street': '101 somewhere lane'},
+    #           6: {'city': 'somewhereville',
+    #               'id': 6,
+    #               'state': 'Kansas',
+    #               'street': '106 somewhere lane'}},
+    #     'articles': {1: {'author': 1,
+    #              'id': 1,
+    #              'title': 'Some Article'},
+    #              2: {'author': [10, 2],
+    #              'id': 2,
+    #              'title': 'Other Article'},
+    #              3: {'author': 3,
+    #              'id': 3,
+    #              'title': 'Some Other Article'},
+    #              4: {'id': 4, 'title': 'Some Other Article'}},
+    #     'users': {1: {'address': [2, 6], 'id': 1, 'name': 'Dan'},
+    #           2: {'address': 1, 'id': 2, 'name': 'Skippy'},
+    #           3: {'id': 3, 'name': 'Ben'},
+    #           10: {'id': 10, 'name': 'Jason'}}},
+    #'results': [2, 1, 3, 4]}
+
