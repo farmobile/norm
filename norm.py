@@ -32,7 +32,9 @@ class Normalize_Base:
             if index == key:
                 return data[index]
             if isinstance(data[index], dict):
-                return self._search_dict(data[index], key)
+                res = self._search_dict(data[index], key)
+                if res:
+                    return res
         return None
         
     def _get_entity_depth(self, entity, data, depth=1):
