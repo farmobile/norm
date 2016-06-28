@@ -149,6 +149,14 @@ class Normalize(Normalize_Base):
                     match = self._process_data_changes(entity, match)
                     new_data['entities'][entity][match[entity_id]] = match
                     self._set_nested_id(entry, entity_key, match[entity_id])
+                elif isinstance(match, list):
+                    ids = []
+                    for row in match:
+                        if entity_id in row:
+                            new_data['entities'][entity][row[entity_id]] = row
+                            ids.append(row[entity_id])
+                    if ids:
+                        self._set_nested_id(entry, entity_key, ids)
 
             entry = self._process_data_changes(name, entry)
             new_data['entities'][name][entry[id_key]] = entry
