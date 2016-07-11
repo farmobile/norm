@@ -55,6 +55,11 @@ if __name__ == '__main__':
     # of the most deeply nested to the least.
     #norm.set_entity_order(('addresses', 'users'))
 
+    # you can swap the primary entity in the data set with a nested entity by setting
+    # nested entity name to swap to with this method. If the requested entity to switch
+    # is not defined, a ValueError is raised.
+    #norm.swap_primary('addresses')
+
     # normalize and return the data
     pprint.pprint(norm.parse(data))
 

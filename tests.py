@@ -104,6 +104,17 @@ class TestNormalize(unittest.TestCase):
         self.assertEqual(norm.entities, {'foo': {'entities': {'bar': {
             'id': 'id', 'key': 'foo'}, 'name': {'id': 'id', 'key': 'key'}}, 'id': 'id'}})
 
+    def test_swap_failure(self):
+        data = [{'id': 1, 'title': 'One', 'baz': [{'id': 2}, {'id': 1, 'bar': {'id': 1}}]}]
+        norm = Normalize()
+        norm.define_primary('foo')
+        norm.swap_primary('blah')
+        try:
+            norm.parse(data)
+            self.assertTrue(False)
+        except ValueError:
+            self.assertTrue(True)
+
     def test_parse(self):
         norm = Normalize()
         norm.define_primary('test', 'ID')
@@ -135,12 +146,26 @@ class TestNormalize(unittest.TestCase):
             'id': 1}, 2: {'id': 2}}, 'foo': {1: {'baz': [2, 1], 'id': 1, 'title': 'One'}}},
             'results': [1]})
 
+        data = [{'id': 1, 'title': 'One', 'baz': [{'id': 2}, {'id': 1, 'bar': {'id': 1}}]}]
+        norm = Normalize()
+        norm.define_primary('foo')
+        norm.define_nested_entity('test', 'baz')
+        norm.swap_primary('test')
+        self.assertEqual(norm.parse(data), {'entities': {'test': {1: {'bar': {'id': 1},
+            'id': 1}, 2: {'id': 2}}, 'foo': {1: {'baz': [2, 1], 'id': 1, 'title': 'One'}}},
+            'results': [1,2]})
+
     def test_rename_flds(self):
         norm = Normalize()
         norm.define_primary('foo')
         norm.rename_flds('foo', 'title', 'heading')
         self.assertEqual(norm.parse([{'id': 1, 'title': 'One'}]), {'entities': {'foo': {1:
             {'heading': 'One', 'id': 1}}}, 'results': [1]})
+
+    def test_set_primary_swap(self):
+        norm = Normalize()
+        norm.swap_primary('test')
+        self.assertEqual(norm.swap_primary_to, 'test')
 
     def test_remove_flds(self):
         norm = Normalize()

@@ -14,6 +14,7 @@ class Normalize_Base:
         self.entity_order = []
         self.remove_fldvals = {}
         self.rename_fldvals = {}
+        self.swap_primary_to = None
 
     def _set_nested_id(self, data, key, idval):
         '''recursively replace nested data with an id'''
@@ -103,8 +104,18 @@ class Normalize_Base:
                     del data[fld]
         return data
 
+    def _process_primary_swap(self, data):
+        if self.swap_primary_to not in data['entities']:
+            raise ValueError('New primary entity does not exist')
+        data['results'] = data['entities'][self.swap_primary_to].keys()
+        return data
+
 
 class Normalize(Normalize_Base):
+
+    def swap_primary(self, name):
+        '''Enable swapping the primary entity with a nest one'''
+        self.swap_primary_to = name
 
     def define_primary(self, name, id_fld='id'):
         '''used to define the top level entity name used in the results'''
@@ -174,4 +185,6 @@ class Normalize(Normalize_Base):
             entry = self._process_data_changes(name, entry)
             new_data['entities'][name][entry[id_key]] = entry
             new_data['results'].append(entry[id_key])
+        if self.swap_primary_to:
+            return self._process_primary_swap(new_data)
         return new_data
