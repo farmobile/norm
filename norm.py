@@ -12,6 +12,7 @@ class Normalize_Base:
 
         self.entities = {}
         self.entity_order = []
+        self.new_keys = []
         self.remove_fldvals = {}
         self.rename_fldvals = {}
         self.swap_primary_to = None
@@ -85,11 +86,15 @@ class Normalize_Base:
         self.entity_order.reverse()
 
     def _process_data_changes(self, entity, data):
+        '''process renaming and removing fields from entities'''
+
         data = self._process_remove(entity, data)
         data = self._process_rename(entity, data)
         return data
 
     def _process_rename(self, entity, data):
+        '''process renaming a field'''
+
         if entity in self.rename_fldvals:
             for fld in self.rename_fldvals[entity]:
                 if fld[0] in data:
@@ -98,6 +103,8 @@ class Normalize_Base:
         return data
 
     def _process_remove(self, entity, data):
+        '''process removing a field from an entity'''
+
         if entity in self.remove_fldvals:
             for fld in self.remove_fldvals[entity]:
                 if fld in data:
@@ -105,11 +112,33 @@ class Normalize_Base:
         return data
 
     def _process_primary_swap(self, data):
+        '''process a change in primery entity'''
+
         if self.swap_primary_to not in data['entities']:
             raise ValueError('New primary entity does not exist')
         data['results'] = data['entities'][self.swap_primary_to].keys()
         return data
 
+    def _process_new_keys(self, data):
+        '''process new one to many keys'''
+
+        for keyset in self.new_keys:
+            if keyset['to'] not in data['entities'] or keyset['from'] not in data['entities']:
+                raise ValueError('Invalid entity used in one to many key creation')
+            data['entities'][keyset['to']] = self._add_new_key(data['entities'][keyset['to']], data['entities'][keyset['from']],
+                keyset['name'], keyset['to_key'])
+        return data
+
+    def _add_new_key(self, to_data, from_data, name, to_key):
+        for to_id in to_data:
+            keys = []
+            for from_id in from_data:
+                if to_key in from_data[from_id]:
+                    if from_data[from_id][to_key] == to_id:
+                        keys.append(from_id)
+            to_data[to_id][name] = keys
+
+        return to_data
 
 class Normalize(Normalize_Base):
 
@@ -153,6 +182,11 @@ class Normalize(Normalize_Base):
         else:
             self.rename_fldvals[entity] = [(name, new_name)]
 
+    def add_one_to_many_key(self, new_key, to_key, to_entity, from_entity):
+        '''add a new key to an entity'''
+
+        self.new_keys.append({'name': new_key, 'to_key': to_key, 'to': to_entity, 'from': from_entity})
+
     def parse(self, data):
         '''convert data'''
 
@@ -186,5 +220,7 @@ class Normalize(Normalize_Base):
             new_data['entities'][name][entry[id_key]] = entry
             new_data['results'].append(entry[id_key])
         if self.swap_primary_to:
-            return self._process_primary_swap(new_data)
+            new_data = self._process_primary_swap(new_data)
+        if self.new_keys:
+            new_data = self._process_new_keys(new_data)
         return new_data

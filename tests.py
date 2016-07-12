@@ -115,6 +115,17 @@ class TestNormalize(unittest.TestCase):
         except ValueError:
             self.assertTrue(True)
 
+    def test_new_key_failure(self):
+        data = [{'id': 1, 'title': 'One', 'baz': [{'id': 2}, {'id': 1, 'bar': {'id': 1}}]}]
+        norm = Normalize()
+        norm.define_primary('foo')
+        norm.add_one_to_many_key('asdf', 'qwer', 'foo', 'bar')
+        try:
+            norm.parse(data)
+            self.assertTrue(False)
+        except ValueError:
+            self.assertTrue(True)
+
     def test_parse(self):
         norm = Normalize()
         norm.define_primary('test', 'ID')
@@ -155,6 +166,16 @@ class TestNormalize(unittest.TestCase):
             'id': 1}, 2: {'id': 2}}, 'foo': {1: {'baz': [2, 1], 'id': 1, 'title': 'One'}}},
             'results': [1,2]})
 
+        data = [{'id': 1, 'title': 'One', 'baz': [{'id': 2}, {'id': 1, 'bar': {'id': 1}}]}]
+        norm = Normalize()
+        norm.define_primary('foo')
+        norm.define_nested_entity('test', 'baz')
+        norm.swap_primary('test')
+        norm.add_one_to_many_key('foo_ids', 'id', 'test', 'foo')
+        self.assertEqual(norm.parse(data), {'entities': {'test': {1: {'foo_ids': [1], 'bar':
+            {'id': 1}, 'id': 1}, 2: {'foo_ids': [], 'id': 2}}, 'foo': {1: {'baz': [2, 1],
+            'id': 1, 'title': 'One'}}}, 'results': [1, 2]})
+
     def test_rename_flds(self):
         norm = Normalize()
         norm.define_primary('foo')
@@ -166,6 +187,11 @@ class TestNormalize(unittest.TestCase):
         norm = Normalize()
         norm.swap_primary('test')
         self.assertEqual(norm.swap_primary_to, 'test')
+
+    def test_add_one_to_many_key(self):
+        norm = Normalize()
+        norm.add_one_to_many_key('new_key', 'to_key', 'to', 'from')
+        self.assertEqual(norm.new_keys, [{'name': 'new_key', 'to_key': 'to_key', 'to': 'to', 'from': 'from'}])
 
     def test_remove_flds(self):
         norm = Normalize()
