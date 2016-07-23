@@ -6,4 +6,4 @@ and flattened data sets more easily consumed by Flux based front ends.
 
 This library was generously released as an Open Source project by Farmobile Inc.
 
-Check out the [example.py](https://github.com/jasonmunro/norm/blob/master/example.py) file for usage info.
+Check out the [example.py](https://github.com/farmobile/norm/blob/master/example.py) file for usage info.
