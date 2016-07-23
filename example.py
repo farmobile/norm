@@ -63,7 +63,7 @@ if __name__ == '__main__':
     # You can create a new one to many key between entities by defining the key
     # relationship you want to create. The first argument is the name for the new key
     # field, the second argument is the reference key used to collect the matching rows
-    # (the "one" in one to many"), the thrid argument is the entity to add the key to,
+    # (the "one" in one to many), the thrid argument is the entity to add the key to,
     # and the forth argument is the entity to pull the keys from.
     #norm.add_one_to_many_key('user_ids', 'address', 'addresses', 'users')
 
