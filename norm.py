@@ -42,7 +42,10 @@ class Normalize_Base:
                     return res
             elif isinstance(data[index], list):
                 for row in data[index]:
-                    res = self._search_dict(row, key)
+                    if isinstance(row, list) or isinstance(row, dict):
+                        res = self._search_dict(row, key)
+                    else:
+                        res = False
                     if res:
                         return res
         return None
