@@ -17,18 +17,35 @@ class Normalize_Base:
         self.rename_fldvals = {}
         self.swap_primary_to = None
 
-    def _set_nested_id(self, data, key, idval):
+    def _set_nested_id(self, data, key, idval, oldval=None):
         '''recursively replace nested data with an id'''
 
         for index in data:
-            if index == key:
+            if index == key and (oldval == None or data[index] == oldval or data[index] == [oldval]):
                 data[index] = idval;
                 return
             if isinstance(data[index], dict):
-                self._set_nested_id(data[index], key, idval)
+                self._set_nested_id(data[index], key, idval, oldval)
             elif isinstance(data[index], list):
                 for row in data[index]:
-                    self._set_nested_id(row, key, idval)
+                    self._set_nested_id(row, key, idval, oldval)
+
+    def _search_dict_all(self, data, key, res=None):
+        '''recursive search a dict for a all occurences of a key'''
+
+        if not res:
+            res = []
+        for index in data:
+            if index == key:
+                res.append(data[index])
+            if isinstance(data[index], dict):
+                res = self._search_dict_all(data[index], key, res)
+            elif isinstance(data[index], list):
+                for row in data[index]:
+                    if isinstance(row, list) or isinstance(row, dict):
+                        res = self._search_dict_all(row, key, res)
+        return res
+
 
     def _search_dict(self, data, key):
         '''recursive search a dict for a key'''
@@ -42,10 +59,7 @@ class Normalize_Base:
                     return res
             elif isinstance(data[index], list):
                 for row in data[index]:
-                    if isinstance(row, list) or isinstance(row, dict):
-                        res = self._search_dict(row, key)
-                    else:
-                        res = False
+                    res = self._search_dict(row, key)
                     if res:
                         return res
         return None
@@ -205,7 +219,8 @@ class Normalize(Normalize_Base):
             for entity in self.entity_order:
                 entity_id = self.entities[name]['entities'][entity]['id']
                 entity_key = self.entities[name]['entities'][entity]['key']
-                match = self._search_dict(entry, entity_key)
+                #match = self._search_dict(entry, entity_key)
+                match = self._search_dict_all(entry, entity_key)
                 if match and entity_id in match:
                     match = self._process_data_changes(entity, match)
                     new_data['entities'][entity][match[entity_id]] = match
@@ -213,10 +228,24 @@ class Normalize(Normalize_Base):
                 elif isinstance(match, list):
                     ids = []
                     for row in match:
-                        if entity_id in row:
-                            new_data['entities'][entity][row[entity_id]] = row
-                            ids.append(row[entity_id])
-                    if ids:
+                        if isinstance(row, list):
+                            ids = []
+                            for subrow in row:
+                                if entity_id in subrow:
+                                    new_data['entities'][entity][subrow[entity_id]] = subrow
+                                    ids.append(subrow[entity_id])
+                            if ids:
+                                if len(ids) == 1:
+                                    ids = ids[0]
+                                self._set_nested_id(entry, entity_key, ids, subrow)
+
+                        else:
+                            if entity_id in row:
+                                new_data['entities'][entity][row[entity_id]] = row
+                                ids.append(row[entity_id])
+                    if isinstance(ids, list):
+                        if len(ids) == 1:
+                            ids = ids[0]
                         self._set_nested_id(entry, entity_key, ids)
 
             entry = self._process_data_changes(name, entry)
