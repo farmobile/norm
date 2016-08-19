@@ -46,24 +46,6 @@ class Normalize_Base:
                         res = self._search_dict_all(row, key, res)
         return res
 
-
-    def _search_dict(self, data, key):
-        '''recursive search a dict for a key'''
-
-        for index in data:
-            if index == key:
-                return data[index]
-            if isinstance(data[index], dict):
-                res = self._search_dict(data[index], key)
-                if res:
-                    return res
-            elif isinstance(data[index], list):
-                for row in data[index]:
-                    res = self._search_dict(row, key)
-                    if res:
-                        return res
-        return None
-        
     def _get_entity_depth(self, entity, data, depth=1):
         '''determine the nesting depth of a key'''
 
@@ -219,13 +201,8 @@ class Normalize(Normalize_Base):
             for entity in self.entity_order:
                 entity_id = self.entities[name]['entities'][entity]['id']
                 entity_key = self.entities[name]['entities'][entity]['key']
-                #match = self._search_dict(entry, entity_key)
                 match = self._search_dict_all(entry, entity_key)
-                if match and entity_id in match:
-                    match = self._process_data_changes(entity, match)
-                    new_data['entities'][entity][match[entity_id]] = match
-                    self._set_nested_id(entry, entity_key, match[entity_id])
-                elif isinstance(match, list):
+                if isinstance(match, list):
                     ids = []
                     for row in match:
                         if isinstance(row, list):
