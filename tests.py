@@ -145,8 +145,8 @@ class TestNormalize(unittest.TestCase):
         norm.define_nested_entity('asdf', 'qwer')
         self.assertEqual(norm.parse([]), None)
         self.assertEqual(norm.parse([{'id': 1, 'title': 'One', 'baz': {'id': 1}},{'id': 2,
-            'title': 'Two', 'baz': {'id': 2}}]), {'entities': {'foo': {1: {'baz': 1, 'id': 1,
-            'title': 'One'}, 2: {'baz': 2, 'id': 2, 'title': 'Two'}}, 'asdf': {}, 'bar': {1:
+            'title': 'Two', 'baz': {'id': 2}}]), {'entities': {'foo': {1: {'baz': [1], 'id': 1,
+            'title': 'One'}, 2: {'baz': [2], 'id': 2, 'title': 'Two'}}, 'asdf': {}, 'bar': {1:
             {'id': 1}, 2: {'id': 2}}}, 'results': [1, 2]})
 
         data = [{'id': 1, 'title': 'One', 'baz': [{'id': 2}, {'id': 1, 'bar': {'id': 1}}]}]
@@ -181,7 +181,7 @@ class TestNormalize(unittest.TestCase):
         norm.define_primary('foo')
         norm.define_nested_entity('test', 'baz')
         self.assertEqual(norm.parse(data), {'entities': {'test': {1: {'bar': {'id': 1},
-            'id': 1}}, 'foo': {1: {'baz': 1, 'id': 1, 'title': 'One'}}},
+            'id': 1}}, 'foo': {1: {'baz': [1], 'id': 1, 'title': 'One'}}},
             'results': [1]})
 
     def test_rename_flds(self):

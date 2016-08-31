@@ -28,7 +28,8 @@ class Normalize_Base:
                 self._set_nested_id(data[index], key, idval, oldval)
             elif isinstance(data[index], list):
                 for row in data[index]:
-                    self._set_nested_id(row, key, idval, oldval)
+                    if isinstance(row, list) or isinstance(row, dict):
+                        self._set_nested_id(row, key, idval, oldval)
 
     def _search_dict_all(self, data, key, res=None):
         '''recursive search a dict for a all occurences of a key'''
@@ -212,8 +213,6 @@ class Normalize(Normalize_Base):
                                     new_data['entities'][entity][subrow[entity_id]] = subrow
                                     ids.append(subrow[entity_id])
                             if ids:
-                                if len(ids) == 1:
-                                    ids = ids[0]
                                 self._set_nested_id(entry, entity_key, ids, subrow)
 
                         else:
@@ -221,8 +220,6 @@ class Normalize(Normalize_Base):
                                 new_data['entities'][entity][row[entity_id]] = row
                                 ids.append(row[entity_id])
                     if isinstance(ids, list):
-                        if len(ids) == 1:
-                            ids = ids[0]
                         self._set_nested_id(entry, entity_key, ids)
 
             entry = self._process_data_changes(name, entry)
