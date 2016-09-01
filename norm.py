@@ -23,13 +23,16 @@ class Normalize_Base:
         for index in data:
             if index == key and (oldval == None or data[index] == oldval or data[index] == [oldval]):
                 data[index] = idval;
-                return
+                return True
             if isinstance(data[index], dict):
-                self._set_nested_id(data[index], key, idval, oldval)
+                if self._set_nested_id(data[index], key, idval, oldval):
+                    return True
             elif isinstance(data[index], list):
                 for row in data[index]:
                     if isinstance(row, list) or isinstance(row, dict):
-                        self._set_nested_id(row, key, idval, oldval)
+                        if self._set_nested_id(row, key, idval, oldval):
+                            return True
+        return False
 
     def _search_dict_all(self, data, key, res=None):
         '''recursive search a dict for a all occurences of a key'''
@@ -205,6 +208,7 @@ class Normalize(Normalize_Base):
                 match = self._search_dict_all(entry, entity_key)
                 if isinstance(match, list):
                     ids = []
+                    updated = 0
                     for row in match:
                         if isinstance(row, list):
                             ids = []
@@ -213,13 +217,14 @@ class Normalize(Normalize_Base):
                                     new_data['entities'][entity][subrow[entity_id]] = subrow
                                     ids.append(subrow[entity_id])
                             if ids:
-                                self._set_nested_id(entry, entity_key, ids, subrow)
+                                if self._set_nested_id(entry, entity_key, ids, subrow):
+                                    updated += 1
 
                         else:
                             if entity_id in row:
                                 new_data['entities'][entity][row[entity_id]] = row
                                 ids.append(row[entity_id])
-                    if isinstance(ids, list):
+                    if len(match) != updated and isinstance(ids, list):
                         self._set_nested_id(entry, entity_key, ids)
 
             entry = self._process_data_changes(name, entry)
