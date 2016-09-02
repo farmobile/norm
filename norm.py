@@ -16,6 +16,7 @@ class Normalize_Base:
         self.remove_fldvals = {}
         self.rename_fldvals = {}
         self.swap_primary_to = None
+        self.ignore_flds = []
 
     def _set_nested_id(self, data, key, idval, oldval=None):
         '''recursively replace nested data with an id'''
@@ -24,12 +25,12 @@ class Normalize_Base:
             if index == key and (oldval == None or data[index] == oldval or data[index] == [oldval]):
                 data[index] = idval;
                 return True
-            if isinstance(data[index], dict):
+            if index not in self.ignore_flds and isinstance(data[index], dict):
                 if self._set_nested_id(data[index], key, idval, oldval):
                     return True
-            elif isinstance(data[index], list):
+            elif index not in self.ignore_flds and isinstance(data[index], list):
                 for row in data[index]:
-                    if isinstance(row, list) or isinstance(row, dict):
+                    if index not in self.ignore_flds and isinstance(row, list) or isinstance(row, dict):
                         if self._set_nested_id(row, key, idval, oldval):
                             return True
         return False
@@ -42,11 +43,11 @@ class Normalize_Base:
         for index in data:
             if index == key:
                 res.append(data[index])
-            if isinstance(data[index], dict):
+            if index not in self.ignore_flds and isinstance(data[index], dict):
                 res = self._search_dict_all(data[index], key, res)
-            elif isinstance(data[index], list):
+            elif index not in self.ignore_flds and isinstance(data[index], list):
                 for row in data[index]:
-                    if isinstance(row, list) or isinstance(row, dict):
+                    if index not in self.ignore_flds and isinstance(row, list) or isinstance(row, dict):
                         res = self._search_dict_all(row, key, res)
         return res
 
@@ -155,6 +156,10 @@ class Normalize(Normalize_Base):
         if len(self.entities):
             raise ValueError('Only one primary entity is allowed')
         self.entities[name] = {'id': id_fld, 'entities': {}}
+
+    def set_ignore_keys(self, keys):
+        '''set the keys to ignore'''
+        self.ignore_flds = keys
 
     def set_entity_order(self, order):
         '''set the nested depth order (deepest first)'''

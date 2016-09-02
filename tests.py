@@ -213,6 +213,11 @@ class TestNormalize(unittest.TestCase):
         norm.set_entity_order(('foo', 'bar'))
         self.assertEqual(norm.entity_order, ('foo', 'bar'))
 
+    def test_ignore_keys(self):
+        norm = Normalize()
+        norm.set_ignore_keys(['test'])
+        self.assertEqual(norm.ignore_flds, ['test'])
+
 
 if __name__ == '__main__':
     unittest.main()
